@@ -1,0 +1,200 @@
+{% comment %}
+  Section: Press / Social proof logos
+  Usage: Add section in theme editor, upload logos, optionally add links.
+{% endcomment %}
+
+<section class="press-proof" style="
+  --pp-bg: {{ section.settings.bg_color }};
+  --pp-text: {{ section.settings.text_color }};
+  --pp-accent: {{ section.settings.accent_color }};
+">
+  <div class="press-proof__wrap">
+    {% if section.settings.left_label != blank %}
+      <div class="press-proof__left">
+        <span class="press-proof__pill">{{ section.settings.left_label }}</span>
+      </div>
+    {% endif %}
+
+    <div class="press-proof__right">
+      {% if section.settings.title != blank %}
+        <span class="press-proof__title">{{ section.settings.title }}</span>
+      {% endif %}
+
+      <div class="press-proof__logos" role="list" aria-label="Logos">
+        {% for block in section.blocks %}
+          {% if block.type == "logo" %}
+            <div class="press-proof__logo" role="listitem" {{ block.shopify_attributes }}>
+              {% if block.settings.link != blank %}
+                <a class="press-proof__logoLink" href="{{ block.settings.link }}" target="_blank" rel="noopener">
+              {% endif %}
+
+              {% if block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 260 }}"
+                  alt="{{ block.settings.alt | escape }}"
+                  loading="lazy"
+                  height="40"
+                >
+              {% else %}
+                <span class="press-proof__logoText">{{ block.settings.text_fallback }}</span>
+              {% endif %}
+
+              {% if block.settings.link != blank %}
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .press-proof{
+    background: var(--pp-bg);
+    padding: 14px 0;
+  }
+  .press-proof__wrap{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .press-proof__left{
+    flex: 0 0 auto;
+  }
+  .press-proof__pill{
+    display:inline-flex;
+    align-items:center;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--pp-accent) 20%, transparent);
+    color: var(--pp-text);
+    font-size: 12px;
+    letter-spacing: .02em;
+    border: 1px solid color-mix(in srgb, var(--pp-accent) 35%, transparent);
+    white-space: nowrap;
+  }
+  .press-proof__right{
+    flex: 1 1 auto;
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .press-proof__title{
+    color: var(--pp-text);
+    opacity: .9;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .press-proof__logos{
+    display:flex;
+    align-items:center;
+    gap: 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+  }
+  .press-proof__logos::-webkit-scrollbar{ display:none; }
+
+  .press-proof__logo{
+    flex: 0 0 auto;
+    display:flex;
+    align-items:center;
+  }
+  .press-proof__logo img{
+    display:block;
+    height: 34px;
+    width: auto;
+    filter: grayscale(1);
+    opacity: .9;
+    transition: opacity .2s ease, filter .2s ease, transform .2s ease;
+  }
+  .press-proof__logoText{
+    color: var(--pp-text);
+    opacity:.85;
+    font-size: 14px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid color-mix(in srgb, var(--pp-text) 25%, transparent);
+    padding-bottom: 2px;
+  }
+  .press-proof__logoLink:hover img{
+    filter: grayscale(0);
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 640px){
+    .press-proof__wrap{ gap: 10px; }
+    .press-proof__title{ display:none; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Preuve sociale - Logos",
+  "settings": [
+    {
+      "type": "text",
+      "id": "left_label",
+      "label": "Label à gauche",
+      "default": "Preuve sociale"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Texte au-dessus des logos",
+      "default": "VU SUR"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond",
+      "default": "#0B1220"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Couleur d'accent",
+      "default": "#1F2937"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Logo (PNG/SVG via image)" },
+        { "type": "text", "id": "alt", "label": "Texte alternatif (ALT)", "default": "Logo média" },
+        { "type": "text", "id": "text_fallback", "label": "Texte si pas d'image", "default": "MEDIA" },
+        { "type": "url", "id": "link", "label": "Lien (optionnel)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Preuve sociale - Logos",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}
