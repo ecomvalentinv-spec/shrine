@@ -62,7 +62,7 @@
         "display_id": false,
         "visibility": "always-display",
         "title": "",
-        "title_highlight_color": "#6D388B",
+        "title_highlight_color": "#6d388b",
         "heading_size": "h1",
         "text": "",
         "button_label": "",
@@ -100,14 +100,67 @@
         "skip_cart": false,
         "padding_top": 36,
         "padding_bottom": 36,
-        "custom_colors_background": "#2E2A39",
+        "custom_colors_background": "#2e2a39",
         "custom_gradient_background": "",
-        "custom_colors_text": "#FFFFFF",
+        "custom_colors_text": "#ffffff",
         "custom_colors_solid_button_background": "#dd1d1d",
         "custom_colors_solid_button_text": "#ffffff",
         "custom_colors_outline_button": "#dd1d1d",
-        "custom_section_colors_background": "#FFFFFF",
+        "custom_section_colors_background": "#ffffff",
         "custom_section_gradient_background": ""
+      }
+    },
+    "seenon_Ayq6Py": {
+      "type": "seenon",
+      "blocks": {
+        "logo_EGAyUU": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/Logo-doctissimo_svg.png",
+            "alt": "Logo",
+            "link": ""
+          }
+        },
+        "logo_yzFXTL": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/Futura-logo.jpg",
+            "alt": "Logo",
+            "link": ""
+          }
+        },
+        "logo_GGbNRw": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/20240503132557-p2-document-kcmz.png",
+            "alt": "Logo",
+            "link": ""
+          }
+        },
+        "logo_B4geby": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/Le_Monde_svg.png",
+            "alt": "Logo",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "logo_EGAyUU",
+        "logo_yzFXTL",
+        "logo_GGbNRw",
+        "logo_B4geby"
+      ],
+      "name": "Vertical ticker (logos)",
+      "settings": {
+        "title": "VU SUR",
+        "bg_color": "#f9f5f2",
+        "text_color": "#2e3a52",
+        "height": 120,
+        "logo_height": 34,
+        "gap": 16,
+        "speed": 12
       }
     },
     "d2d3417b-e92f-428c-b221-5bceffb552be": {
@@ -448,6 +501,7 @@
   },
   "order": [
     "shoppable_image_Ltky7C",
+    "seenon_Ayq6Py",
     "d2d3417b-e92f-428c-b221-5bceffb552be",
     "6aa09428-a417-429d-9159-a4e8afd49590",
     "0f1fc9e4-bc4c-4052-9747-62d1f8472caa",
