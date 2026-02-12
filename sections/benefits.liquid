@@ -1,7 +1,13 @@
+{% comment %}
+  Section: Sticky center product + benefits left/right + subtle zoom on scroll
+  - TEXT ONLY benefits (no dots)
+  - Center product stays sticky and scales slightly as benefits scroll
+{% endcomment %}
+
 <section class="bsz" id="bsz-{{ section.id }}" style="
   --bg: {{ section.settings.bg_color }};
   --text: {{ section.settings.text_color }};
-  --dot: {{ section.settings.dot_color }};
+  --muted: {{ section.settings.muted_color }};
   --max: {{ section.settings.max_scale }};
 ">
   <div class="bsz__wrap">
@@ -10,22 +16,21 @@
     {% endif %}
 
     <div class="bsz__grid">
+      <!-- LEFT -->
       <div class="bsz__col bsz__col--left">
         {% for block in section.blocks %}
           {% if block.type == 'benefit' and block.settings.side == 'left' %}
             <article class="bsz__item" data-bsz-item {{ block.shopify_attributes }}>
-              <span class="bsz__dot" aria-hidden="true"></span>
-              <div class="bsz__copy">
-                <p class="bsz__h">{{ block.settings.heading }}</p>
-                {% if block.settings.text != blank %}
-                  <p class="bsz__p">{{ block.settings.text }}</p>
-                {% endif %}
-              </div>
+              <p class="bsz__h">{{ block.settings.heading }}</p>
+              {% if block.settings.text != blank %}
+                <p class="bsz__p">{{ block.settings.text }}</p>
+              {% endif %}
             </article>
           {% endif %}
         {% endfor %}
       </div>
 
+      <!-- CENTER -->
       <div class="bsz__center">
         <div class="bsz__sticky">
           {% if section.settings.image != blank %}
@@ -42,17 +47,15 @@
         </div>
       </div>
 
+      <!-- RIGHT -->
       <div class="bsz__col bsz__col--right">
         {% for block in section.blocks %}
           {% if block.type == 'benefit' and block.settings.side == 'right' %}
             <article class="bsz__item bsz__item--right" data-bsz-item {{ block.shopify_attributes }}>
-              <div class="bsz__copy bsz__copy--right">
-                <p class="bsz__h">{{ block.settings.heading }}</p>
-                {% if block.settings.text != blank %}
-                  <p class="bsz__p">{{ block.settings.text }}</p>
-                {% endif %}
-              </div>
-              <span class="bsz__dot" aria-hidden="true"></span>
+              <p class="bsz__h">{{ block.settings.heading }}</p>
+              {% if block.settings.text != blank %}
+                <p class="bsz__p">{{ block.settings.text }}</p>
+              {% endif %}
             </article>
           {% endif %}
         {% endfor %}
@@ -71,9 +74,9 @@
       const items = root.querySelectorAll("[data-bsz-item]");
       if (!items.length) return;
 
-      // We'll scale based on the "most centered" benefit currently in view
       function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
+      // Scale based on the benefit currently closest to viewport center
       function update(){
         const vh = window.innerHeight || document.documentElement.clientHeight;
 
@@ -82,7 +85,7 @@
           const r = el.getBoundingClientRect();
           const mid = r.top + r.height/2;
           const dist = Math.abs(vh*0.5 - mid);
-          const local = 1 - clamp(dist / (vh*0.45), 0, 1); // closer to center => higher
+          const local = 1 - clamp(dist / (vh*0.45), 0, 1);
           if (local > best) best = local;
         });
 
@@ -111,28 +114,33 @@
     padding: 0 16px;
   }
   .bsz__title{
-    text-align:center;
-    margin:0 0 34px;
+    text-align: center;
+    margin: 0 0 34px;
     font-weight: 900;
     letter-spacing: .01em;
   }
 
-  /* Desktop 3 columns */
+  /* Desktop: 3 columns (left / sticky center / right) */
   .bsz__grid{
-    display:grid;
+    display: grid;
     grid-template-columns: 1fr minmax(240px, 360px) 1fr;
     gap: 26px;
-    align-items:start;
+    align-items: start;
   }
 
   .bsz__col{
-    display:flex;
-    flex-direction:column;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
     padding-top: 12px;
+    z-index: 2; /* keep text above center if needed */
   }
 
-  .bsz__center{ display:flex; justify-content:center; }
+  .bsz__center{
+    display: flex;
+    justify-content: center;
+    z-index: 1;
+  }
 
   /* Sticky product: stays centered while you scroll benefits */
   .bsz__sticky{
@@ -140,53 +148,39 @@
     top: 120px;
     width: 100%;
     max-width: 340px;
-    aspect-ratio: 1/1;
-    display:grid;
-    place-items:center;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
   }
 
   .bsz__img{
     width: 100%;
     height: auto;
-    display:block;
-    object-fit:contain;
+    display: block;
+    object-fit: contain;
     transform: scale(1);
     transform-origin: center;
     transition: transform 140ms linear;
-    pointer-events:none;
   }
 
   .bsz__ph{
-    width:100%;
+    width: 100%;
     height: 320px;
     border-radius: 22px;
     border: 1px dashed color-mix(in srgb, var(--text) 18%, transparent);
-    display:grid;
-    place-items:center;
-    opacity:.7;
+    display: grid;
+    place-items: center;
+    opacity: .7;
   }
 
-  /* Benefit items */
+  /* Benefits: text-only, premium */
   .bsz__item{
-    display:grid;
-    grid-template-columns: 18px 1fr;
-    gap: 12px;
-    align-items:start;
-  }
-  .bsz__item--right{
-    grid-template-columns: 1fr 18px;
-  }
-
-  .bsz__dot{
-    width: 14px; height: 14px;
-    border-radius: 999px;
-    background: var(--dot);
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--dot) 18%, transparent);
-    margin-top: 4px;
+    padding: 2px 0;
   }
 
   .bsz__h{
-    margin:0;
+    margin: 0;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: .10em;
@@ -194,13 +188,18 @@
     line-height: 1.25;
   }
   .bsz__p{
-    margin: 6px 0 0;
-    opacity:.85;
+    margin: 7px 0 0;
+    color: var(--muted);
     font-size: 13px;
-    line-height: 1.45;
+    line-height: 1.5;
   }
 
-  /* ✅ Mobile: keep "sides" by using 2 columns of benefits + sticky product behind */
+  .bsz__item--right,
+  .bsz__col--right{
+    text-align: right;
+  }
+
+  /* Mobile: keep "sides" using 2 columns for benefits + sticky product above */
   @media (max-width: 900px){
     .bsz{ padding: 34px 0; }
 
@@ -210,7 +209,7 @@
       position: relative;
     }
 
-    /* Put product as sticky background centered, without blocking text */
+    /* Put product as sticky centered element that doesn't block text */
     .bsz__center{
       grid-column: 1 / -1;
       order: -1;
@@ -218,13 +217,14 @@
       top: 88px;
       z-index: 0;
       pointer-events: none;
-      display:flex;
-      justify-content:center;
+      display: flex;
+      justify-content: center;
       margin-bottom: 10px;
     }
     .bsz__sticky{
       max-width: 220px;
-      opacity: 0.95;
+      opacity: 0.96;
+      top: 88px;
     }
 
     .bsz__col{
@@ -232,9 +232,9 @@
       padding-top: 0;
     }
 
-    /* Make items tighter on mobile */
-    .bsz__item, .bsz__item--right{
-      grid-template-columns: 16px 1fr;
+    .bsz__item--right,
+    .bsz__col--right{
+      text-align: left; /* meilleure lisibilité mobile */
     }
   }
 </style>
@@ -249,7 +249,7 @@
 
     { "type": "color", "id": "bg_color", "label": "Fond", "default": "#0B1220" },
     { "type": "color", "id": "text_color", "label": "Texte", "default": "#E5E7EB" },
-    { "type": "color", "id": "dot_color", "label": "Points", "default": "#334155" },
+    { "type": "color", "id": "muted_color", "label": "Texte secondaire", "default": "#9CA3AF" },
 
     {
       "type": "range",
