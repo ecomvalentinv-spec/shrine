@@ -11,25 +11,32 @@
   "name": "t:sections.footer.name",
   "type": "footer",
   "sections": {
+    "section_divider_d43NmD": {
+      "type": "section-divider",
+      "name": "Section divider",
+      "settings": {
+        "visibility": "always-display",
+        "shape": "curved_3",
+        "flip_horizontal": false,
+        "flip_vertical": false,
+        "shape_color": "accent-1",
+        "custom_shape_color": "#dd1d1d",
+        "background_color": "background-1",
+        "custom_background_color": "#ffffff",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
     "footer": {
       "type": "footer",
       "blocks": {
-        "1c647602-cc00-4009-a058-976435c8ee9e": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Quick links",
-            "menu": "footer",
-            "width_desktop": 4,
-            "width_mobile": "1"
-          }
-        },
         "24f208fd-0898-43eb-af23-d74f8420ab37": {
           "type": "email_signup",
           "settings": {
-            "heading": "Subscribe to our emails",
-            "subtext": "<p>Join our email list for exclusive offers and the latest news.</p>",
+            "heading": "Abonne-toi à la newsletters!",
+            "subtext": "",
             "button_type": "solid",
-            "button_label": "Sign up",
+            "button_label": "S'inscrire",
             "button_style_secondary": false,
             "width_desktop": 4,
             "width_mobile": "2"
@@ -37,18 +44,17 @@
         }
       },
       "block_order": [
-        "1c647602-cc00-4009-a058-976435c8ee9e",
         "24f208fd-0898-43eb-af23-d74f8420ab37"
       ],
       "settings": {
         "color_scheme": "accent-1",
-        "enable_follow_on_shop": false,
+        "enable_follow_on_shop": true,
         "show_social": false,
         "enable_country_selector": false,
         "enable_language_selector": true,
         "payment_enable": true,
         "enabled_payment_types": "",
-        "show_policy": false,
+        "show_policy": true,
         "branding_text": "Powered by <a href=\"https://shrinesolutions.com/\" target=\"_blank\" title=\"https://shrinesolutions.com/\">Shrine</a>",
         "margin_top": 0,
         "padding_top": 32,
@@ -63,6 +69,7 @@
     }
   },
   "order": [
+    "section_divider_d43NmD",
     "footer"
   ]
 }
