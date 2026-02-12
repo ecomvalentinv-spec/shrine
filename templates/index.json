@@ -242,7 +242,7 @@
             "align": "center",
             "x_offset": 94,
             "y_offset": 80,
-            "font_size": 18,
+            "font_size": 20,
             "opacity": 100,
             "follow_strength": 12
           }
@@ -255,7 +255,7 @@
             "align": "center",
             "x_offset": -121,
             "y_offset": 80,
-            "font_size": 18,
+            "font_size": 20,
             "opacity": 100,
             "follow_strength": 12
           }
