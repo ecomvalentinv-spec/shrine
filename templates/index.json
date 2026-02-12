@@ -41,8 +41,8 @@
         "hotspot_F6dtn3": {
           "type": "hotspot",
           "settings": {
-            "offset_x": 70,
-            "offset_y": 46,
+            "offset_x": 73,
+            "offset_y": 44,
             "enable_mobile_position": false,
             "mobile_offset_x": 30,
             "mobile_offset_y": 30,
@@ -76,7 +76,7 @@
         "content_corner_radius": true,
         "color_scheme": "background-1",
         "section_color_scheme": "background-1",
-        "image": "shopify://shop_images/Black_Minimalist_Skincare_Product_Instagram_Story.png",
+        "image": "shopify://shop_images/Black_Minimalist_Skincare_Product_Instagram_Story_1.png",
         "desktop_image_width": "limited",
         "image_max_width": 900,
         "full_page_width": false,
