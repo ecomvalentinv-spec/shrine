@@ -1,97 +1,103 @@
 {% comment %}
-  Section: Sticky center product + benefits left/right + subtle zoom on scroll
-  - TEXT ONLY benefits (no dots)
-  - Center product stays sticky and scales slightly as benefits scroll
+  Section: Sticky center image + floating benefits (TEXT BACKGROUND)
+  - Each benefit block: adjustable X/Y position
+  - Text is behind image (z-index)
+  - Text follows product movement via scroll progress variable
+  - Opacity is 0..100 to satisfy Shopify schema constraints
 {% endcomment %}
 
-<section class="bsz" id="bsz-{{ section.id }}" style="
+<section class="bfz" id="bfz-{{ section.id }}" style="
   --bg: {{ section.settings.bg_color }};
   --text: {{ section.settings.text_color }};
   --muted: {{ section.settings.muted_color }};
   --max: {{ section.settings.max_scale }};
+  --imgW: {{ section.settings.image_max_width }}px;
+  --padY: {{ section.settings.padding_y }}px;
+  --p: 0;
 ">
-  <div class="bsz__wrap">
+  <div class="bfz__wrap">
     {% if section.settings.title != blank %}
-      <h2 class="bsz__title">{{ section.settings.title }}</h2>
+      <h2 class="bfz__title">{{ section.settings.title }}</h2>
     {% endif %}
 
-    <div class="bsz__grid">
-      <!-- LEFT -->
-      <div class="bsz__col bsz__col--left">
+    <div class="bfz__stage" aria-label="Bénéfices produit">
+      <!-- Floating TEXT (background layer) -->
+      <div class="bfz__benefits">
         {% for block in section.blocks %}
-          {% if block.type == 'benefit' and block.settings.side == 'left' %}
-            <article class="bsz__item" data-bsz-item {{ block.shopify_attributes }}>
-              <p class="bsz__h">{{ block.settings.heading }}</p>
-              {% if block.settings.text != blank %}
-                <p class="bsz__p">{{ block.settings.text }}</p>
-              {% endif %}
-            </article>
+          {% if block.type == 'benefit' %}
+            <div
+              class="bfz__benefit"
+              data-bfz-item
+              style="
+                --x: {{ block.settings.x_offset }}px;
+                --y: {{ block.settings.y_offset }}px;
+                --fs: {{ block.settings.font_size }}px;
+                --op: {{ block.settings.opacity }};
+                --follow: {{ block.settings.follow_strength }};
+                --align: {{ block.settings.align }};
+              "
+              {{ block.shopify_attributes }}
+            >
+              <div class="bfz__benefitInner bfz__benefitInner--{{ block.settings.align }}">
+                <div class="bfz__h">{{ block.settings.heading }}</div>
+                {% if block.settings.text != blank %}
+                  <div class="bfz__p">{{ block.settings.text }}</div>
+                {% endif %}
+              </div>
+            </div>
           {% endif %}
         {% endfor %}
       </div>
 
-      <!-- CENTER -->
-      <div class="bsz__center">
-        <div class="bsz__sticky">
+      <!-- Center image (foreground layer) -->
+      <div class="bfz__center">
+        <div class="bfz__sticky">
           {% if section.settings.image != blank %}
             <img
-              src="{{ section.settings.image | image_url: width: 900 }}"
+              src="{{ section.settings.image | image_url: width: 1000 }}"
               alt="{{ section.settings.image_alt | escape }}"
               loading="lazy"
-              class="bsz__img"
-              id="bsz-img-{{ section.id }}"
+              class="bfz__img"
+              id="bfz-img-{{ section.id }}"
             >
           {% else %}
-            <div class="bsz__ph">Ajoute l'image produit</div>
+            <div class="bfz__ph">Ajoute l'image produit</div>
           {% endif %}
         </div>
-      </div>
-
-      <!-- RIGHT -->
-      <div class="bsz__col bsz__col--right">
-        {% for block in section.blocks %}
-          {% if block.type == 'benefit' and block.settings.side == 'right' %}
-            <article class="bsz__item bsz__item--right" data-bsz-item {{ block.shopify_attributes }}>
-              <p class="bsz__h">{{ block.settings.heading }}</p>
-              {% if block.settings.text != blank %}
-                <p class="bsz__p">{{ block.settings.text }}</p>
-              {% endif %}
-            </article>
-          {% endif %}
-        {% endfor %}
       </div>
     </div>
   </div>
 
   <script>
     (function(){
-      const root = document.getElementById("bsz-{{ section.id }}");
+      const root = document.getElementById("bfz-{{ section.id }}");
       if (!root) return;
 
-      const img = root.querySelector(".bsz__img");
+      const img = root.querySelector(".bfz__img");
       if (!img) return;
 
-      const items = root.querySelectorAll("[data-bsz-item]");
+      const items = root.querySelectorAll("[data-bfz-item]");
       if (!items.length) return;
 
-      function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+      function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 
-      // Scale based on the benefit currently closest to viewport center
       function update(){
         const vh = window.innerHeight || document.documentElement.clientHeight;
 
-        let best = 0; // 0..1
+        // "best" is the benefit closest to viewport center (0..1)
+        let best = 0;
         items.forEach(el => {
           const r = el.getBoundingClientRect();
           const mid = r.top + r.height/2;
           const dist = Math.abs(vh*0.5 - mid);
-          const local = 1 - clamp(dist / (vh*0.45), 0, 1);
+          const local = 1 - clamp(dist / (vh*0.55), 0, 1);
           if (local > best) best = local;
         });
 
+        root.style.setProperty("--p", best.toFixed(3));
+
         const max = parseFloat(getComputedStyle(root).getPropertyValue("--max")) || 1.1;
         const scale = 1 + (max - 1) * best;
-
         img.style.transform = "scale(" + scale.toFixed(3) + ")";
       }
 
@@ -103,58 +109,92 @@
 </section>
 
 <style>
-  .bsz{
+  .bfz{
     background: var(--bg);
     color: var(--text);
-    padding: 56px 0;
+    padding: var(--padY) 0;
+    overflow: hidden;
   }
-  .bsz__wrap{
+  .bfz__wrap{
     max-width: 1180px;
     margin: 0 auto;
     padding: 0 16px;
   }
-  .bsz__title{
+  .bfz__title{
     text-align: center;
-    margin: 0 0 34px;
+    margin: 0 0 28px;
     font-weight: 900;
     letter-spacing: .01em;
   }
 
-  /* Desktop: 3 columns (left / sticky center / right) */
-  .bsz__grid{
-    display: grid;
-    grid-template-columns: 1fr minmax(240px, 360px) 1fr;
-    gap: 26px;
-    align-items: start;
+  .bfz__stage{
+    position: relative;
+    min-height: 520px;
   }
 
-  .bsz__col{
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    padding-top: 12px;
-    z-index: 2; /* keep text above center if needed */
+  /* Background benefits layer */
+  .bfz__benefits{
+    position: relative;
+    z-index: 1; /* behind the image */
+    pointer-events: none;
   }
 
-  .bsz__center{
+  .bfz__benefit{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    opacity: calc(var(--op) / 100);
+    transform:
+      translate(-50%, -50%)
+      translate(var(--x), var(--y))
+      translate(calc(var(--p) * var(--follow) * 1px), calc(var(--p) * var(--follow) * -0.6px));
+    transition: transform 120ms linear;
+  }
+
+  .bfz__benefitInner{
+    max-width: 260px;
+  }
+
+  .bfz__benefitInner--left{ text-align: left; }
+  .bfz__benefitInner--right{ text-align: right; }
+  .bfz__benefitInner--center{ text-align: center; }
+
+  /* Big + bold (premium) */
+  .bfz__h{
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .10em;
+    font-size: var(--fs);
+    line-height: 1.15;
+  }
+  .bfz__p{
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: calc(var(--fs) - 4px);
+    line-height: 1.45;
+    letter-spacing: .01em;
+  }
+
+  /* Foreground image layer */
+  .bfz__center{
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: center;
-    z-index: 1;
   }
 
-  /* Sticky product: stays centered while you scroll benefits */
-  .bsz__sticky{
+  .bfz__sticky{
     position: sticky;
     top: 120px;
     width: 100%;
-    max-width: 340px;
+    max-width: var(--imgW);
     aspect-ratio: 1 / 1;
     display: grid;
     place-items: center;
     pointer-events: none;
   }
 
-  .bsz__img{
+  .bfz__img{
     width: 100%;
     height: auto;
     display: block;
@@ -164,7 +204,7 @@
     transition: transform 140ms linear;
   }
 
-  .bsz__ph{
+  .bfz__ph{
     width: 100%;
     height: 320px;
     border-radius: 22px;
@@ -174,76 +214,31 @@
     opacity: .7;
   }
 
-  /* Benefits: text-only, premium */
-  .bsz__item{
-    padding: 2px 0;
-  }
-
-  .bsz__h{
-    margin: 0;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: .10em;
-    font-size: 13px;
-    line-height: 1.25;
-  }
-  .bsz__p{
-    margin: 7px 0 0;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-
-  .bsz__item--right,
-  .bsz__col--right{
-    text-align: right;
-  }
-
-  /* Mobile: keep "sides" using 2 columns for benefits + sticky product above */
   @media (max-width: 900px){
-    .bsz{ padding: 34px 0; }
+    .bfz__stage{ min-height: 560px; }
+    .bfz__benefitInner{ max-width: 180px; }
+    .bfz__sticky{ top: 88px; max-width: 240px; }
 
-    .bsz__grid{
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      position: relative;
+    .bfz__benefit{
+      transform:
+        translate(-50%, -50%)
+        translate(var(--x), var(--y))
+        translate(calc(var(--p) * var(--follow) * 0.6px), calc(var(--p) * var(--follow) * -0.35px));
     }
+  }
 
-    /* Put product as sticky centered element that doesn't block text */
-    .bsz__center{
-      grid-column: 1 / -1;
-      order: -1;
-      position: sticky;
-      top: 88px;
-      z-index: 0;
-      pointer-events: none;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
-    }
-    .bsz__sticky{
-      max-width: 220px;
-      opacity: 0.96;
-      top: 88px;
-    }
-
-    .bsz__col{
-      z-index: 2;
-      padding-top: 0;
-    }
-
-    .bsz__item--right,
-    .bsz__col--right{
-      text-align: left; /* meilleure lisibilité mobile */
-    }
+  @media (prefers-reduced-motion: reduce){
+    .bfz__benefit{ transition: none; }
+    .bfz__img{ transition: none; }
   }
 </style>
 
 {% schema %}
 {
-  "name": "Bénéfices sticky",
+  "name": "Bénéfices flottants",
   "settings": [
-    { "type": "text", "id": "title", "label": "Titre", "default": "Pourquoi HUSHA ?" },
+    { "type": "text", "id": "title", "label": "Titre", "default": "Bénéfices" },
+
     { "type": "image_picker", "id": "image", "label": "Image produit" },
     { "type": "text", "id": "image_alt", "label": "ALT", "default": "Bouchon anti-bruit" },
 
@@ -251,6 +246,24 @@
     { "type": "color", "id": "text_color", "label": "Texte", "default": "#E5E7EB" },
     { "type": "color", "id": "muted_color", "label": "Texte secondaire", "default": "#9CA3AF" },
 
+    {
+      "type": "range",
+      "id": "padding_y",
+      "label": "Padding vertical (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "label": "Taille image max (px)",
+      "min": 200,
+      "max": 520,
+      "step": 10,
+      "default": 340
+    },
     {
       "type": "range",
       "id": "max_scale",
@@ -266,27 +279,58 @@
       "type": "benefit",
       "name": "Bénéfice",
       "settings": [
+        { "type": "text", "id": "heading", "label": "Titre", "default": "Confort longue durée" },
+        { "type": "text", "id": "text", "label": "Texte", "default": "Embouts doux, agréable plusieurs heures." },
+
         {
           "type": "select",
-          "id": "side",
-          "label": "Côté",
+          "id": "align",
+          "label": "Alignement texte",
           "options": [
             { "value": "left", "label": "Gauche" },
+            { "value": "center", "label": "Centre" },
             { "value": "right", "label": "Droite" }
           ],
           "default": "left"
         },
-        { "type": "text", "id": "heading", "label": "Titre", "default": "Bénéfice" },
-        { "type": "text", "id": "text", "label": "Texte", "default": "Une phrase courte." }
+
+        { "type": "number", "id": "x_offset", "label": "Position X (px)", "default": -320 },
+        { "type": "number", "id": "y_offset", "label": "Position Y (px)", "default": -140 },
+
+        {
+          "type": "range",
+          "id": "font_size",
+          "label": "Taille titre (px)",
+          "min": 12,
+          "max": 34,
+          "step": 1,
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "opacity",
+          "label": "Opacité (0-100)",
+          "min": 10,
+          "max": 100,
+          "step": 5,
+          "default": 55
+        },
+        {
+          "type": "range",
+          "id": "follow_strength",
+          "label": "Suivi du mouvement (px)",
+          "min": 0,
+          "max": 80,
+          "step": 2,
+          "default": 22
+        }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Bénéfices sticky",
+      "name": "Bénéfices flottants",
       "blocks": [
-        { "type": "benefit" },
-        { "type": "benefit" },
         { "type": "benefit" },
         { "type": "benefit" },
         { "type": "benefit" },
