@@ -163,6 +163,75 @@
         "speed": 12
       }
     },
+    "section_divider_KgkCV9": {
+      "type": "section-divider",
+      "name": "Section divider",
+      "settings": {
+        "visibility": "always-display",
+        "shape": "curved_1",
+        "flip_horizontal": false,
+        "flip_vertical": false,
+        "shape_color": "accent-1",
+        "custom_shape_color": "#dd1d1d",
+        "background_color": "background-1",
+        "custom_background_color": "#FFFFFF",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "benefits_pVLLDR": {
+      "type": "benefits",
+      "blocks": {
+        "benefit_EMqwVN": {
+          "type": "benefit",
+          "settings": {
+            "side": "left",
+            "heading": "Confort longue durée",
+            "text": ""
+          }
+        },
+        "benefit_hhtbmx": {
+          "type": "benefit",
+          "settings": {
+            "side": "left",
+            "heading": "Discret & esthétique",
+            "text": ""
+          }
+        },
+        "benefit_pMEhBL": {
+          "type": "benefit",
+          "settings": {
+            "side": "right",
+            "heading": "Discret & esthétique",
+            "text": ""
+          }
+        },
+        "benefit_4pAjCH": {
+          "type": "benefit",
+          "settings": {
+            "side": "right",
+            "heading": "Réutilisable & facile à nettoyer",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "benefit_EMqwVN",
+        "benefit_hhtbmx",
+        "benefit_pMEhBL",
+        "benefit_4pAjCH"
+      ],
+      "name": "Bénéfices sticky",
+      "settings": {
+        "title": "",
+        "image": "shopify://shop_images/Black_Minimalist_Skincare_Product_Instagram_Story_2.png",
+        "image_alt": "Bouchon anti-bruit",
+        "bg_color": "#2e3a52",
+        "text_color": "#9e9b99",
+        "muted_color": "#9CA3AF",
+        "max_scale": 1.2
+      }
+    },
     "d2d3417b-e92f-428c-b221-5bceffb552be": {
       "type": "comparison-table",
       "blocks": {
@@ -502,6 +571,8 @@
   "order": [
     "shoppable_image_Ltky7C",
     "seenon_Ayq6Py",
+    "section_divider_KgkCV9",
+    "benefits_pVLLDR",
     "d2d3417b-e92f-428c-b221-5bceffb552be",
     "6aa09428-a417-429d-9159-a4e8afd49590",
     "0f1fc9e4-bc4c-4052-9747-62d1f8472caa",
